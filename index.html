@@ -9,28 +9,23 @@
 <body>
 
     <div id="app">
-        <!-- input -->
-        <div v-show="status == 'add'">
-            <input type="text" id="input_text">
-            <button id="btn" v-on:click="add">Add</button>
-        </div>
-        <!-- edit -->
-        <div v-show="status == 'edit'">
-            <input type="hidden" id="index" value="">
-            <input type="text" id="input_edit">
-            <button id="btn_edit" v-on:click="update">Update</button>
+        <div>
+            <input type="text" v-model="input_text">
+            <button id="btn" v-show="!editing" v-on:click="add">Add</button>
+            <button id="btn_edit" v-show="editing" v-on:click="update">Update</button>
         </div>
 
         <ul>
             <li v-for="(user, index) in users" style="padding-bottom: 20px;">
-                {{user.name}}&nbsp;<button v-on:click="edit(user,index)">Edit</button> | <button v-on:click="del(index)">Delete</button>
+                {{user.name}}&nbsp;
+                <button v-on:click="edit(user)">Edit</button> || <button v-on:click="del(index)">Delete</button>
             </li>
         </ul>
 
     </div>
     
 
-    <script src="/js/vue.js"></script>
+    <script src="/js/vue.min.js"></script>
     <script>
         let app = new Vue({
             el: "#app",
@@ -46,30 +41,29 @@
                         'name' : 'Faqih Muhammad'
                     }
                 ],
-                status: 'add'
+                editing: false,
+                input_text: null,
+                selectedUser: {}
             },
             methods: {
                 add: function(){
-                    let input = document.getElementById('input_text');
-                    let btn = document.getElementById('btn');
-                    if (input.value) {
-                        this.users.push({'name':input.value});
-                        input.value = '';
+                    if (this.input_text) {
+                        this.users.push({'name':this.input_text});
+                        this.input_text = null;
                     }
                 },
-                edit: function(data,index){
-                    let input = document.getElementById('input_edit');
-                    let idx = document.getElementById('index');
-                    input.value = data.name;
-                    idx.value = index;
-                    this.status = 'edit';
+                edit: function(data){
+                    this.input_text = data.name;
+                    this.selectedUser = data;
+                    this.editing = true;
                 },
                 update: function(){
-                    let idx = document.getElementById('index').value;
-                    let input = document.getElementById('input_edit');
-                    let data = this.users[idx];
-                    data.name = input.value;
-                    this.status = 'add';
+                    if (this.input_text) {
+                        this.selectedUser.name = this.input_text;
+                        this.editing = false;
+                        this.selectedUser = {}
+                        this.input_text = null;
+                    }
                 },
                 del: function(index){
                     if (confirm("Apakah Anda yakin ingin menghapus?")) {
