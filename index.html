@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Pekan 2</title>
+</head>
+<body>
+
+    <div id="app">
+        <!-- input -->
+        <div v-show="status == 'add'">
+            <input type="text" id="input_text">
+            <button id="btn" v-on:click="add">Add</button>
+        </div>
+        <!-- edit -->
+        <div v-show="status == 'edit'">
+            <input type="hidden" id="index" value="">
+            <input type="text" id="input_edit">
+            <button id="btn_edit" v-on:click="update">Edit</button>
+        </div>
+
+        <ul>
+            <li v-for="(user, index) in users" style="padding-bottom: 20px;">
+                {{user.name}}&nbsp;<button v-on:click="edit(user,index)">Edit</button> | <button v-on:click="del(index)">Delete</button>
+            </li>
+        </ul>
+
+    </div>
+    
+
+    <script src="/js/vue.js"></script>
+    <script>
+        let app = new Vue({
+            el: "#app",
+            data: {
+                users: [
+                    {
+                        'name': 'Muhammad Iqbal Mubarok'
+                    },
+                    {
+                        'name': 'Ruby Purwanti'
+                    },
+                    {
+                        'name' : 'Faqih Muhammad'
+                    }
+                ],
+                status: 'add'
+            },
+            methods: {
+                add: function(){
+                    let input = document.getElementById('input_text');
+                    let btn = document.getElementById('btn');
+                    if (input.value) {
+                        this.users.push({'name':input.value});
+                        input.value = '';
+                    }
+                },
+                edit: function(data,index){
+                    let input = document.getElementById('input_edit');
+                    let idx = document.getElementById('index');
+                    input.value = data.name;
+                    idx.value = index;
+                    this.status = 'edit';
+                },
+                update: function(){
+                    let idx = document.getElementById('index').value;
+                    let input = document.getElementById('input_edit');
+                    let data = this.users[idx];
+                    data.name = input.value;
+                    this.status = 'add';
+                },
+                del: function(index){
+                    if (confirm("Apakah Anda yakin ingin menghapus?")) {
+                        this.users.splice(index,1);
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
